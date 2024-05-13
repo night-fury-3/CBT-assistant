@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Upload Database</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+	<select id="folder_select">
+		<option selected disabled>Please Select Folder</option>
+		{% for folder in folder_list %}
+		<option value="{{folder}}">{{folder}}</option>
+		{% endfor %}
+	</select>
+	<input type="file" id="files" multiple accept=".pdf" />
+	<button id="upload">Upload</button>
+</body>
+<script>
+	$(document).ready(function () {
+		$("#upload").click(function () {
+			var files = $("#files")[0].files;
+			var folder = $("#folder_select").val();
+
+			var fileData = new FormData();
+
+			for (var i = 0; i < files.length; i++) {
+				fileData.append('files[]', files[i]);
+			}
+
+			fileData.append('folder', folder);
+
+			$.ajax({
+				url: `/uploadDocuments`,
+				method: 'POST',
+				data: fileData,
+				processData: false,
+				contentType: false,
+				success: function (result) {
+					if (result.success === "ok") {
+						alert("Successfully uploaded");
+					}
+					else console.error("An error occurred...");
+
+				},
+				error: function (xhr, status, error) {
+					console.error('Error occurred: ', error);
+					alert("Error occurred!");
+				}
+			});
+		});
+	});
+</script>
+
+</html>
